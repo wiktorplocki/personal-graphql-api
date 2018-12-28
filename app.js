@@ -1,9 +1,21 @@
 const express = require('express');
+const graphqlHTTP = require('express-graphql');
 const mongoose = require('mongoose');
+
+const gqlSchema = require('./schemas');
+const gqlResolver = require('./resolvers');
 
 const app = express();
 
 app.use(express.json());
+app.use(
+  '/api',
+  graphqlHTTP({
+    schema: gqlSchema,
+    rootValue: gqlResolver,
+    graphiql: true
+  })
+);
 
 mongoose
   .connect(
