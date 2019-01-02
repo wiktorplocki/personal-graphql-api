@@ -17,6 +17,11 @@ module.exports = buildSchema(`
     email: String!
     password: String!
   }
+  type AuthData {
+    userId: ID!
+    token: String!
+    tokenExpiry: Int!
+  }
 
   input TechnologyInput {
     label: String!
@@ -35,6 +40,7 @@ module.exports = buildSchema(`
     technologies: [Technology!]!
     projects: [Project!]!
     users: [User!]!
+    login(email: String!, password: String!): AuthData!
   }
 
   type RootMutation {
