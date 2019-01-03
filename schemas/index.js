@@ -47,6 +47,7 @@ module.exports = buildSchema(`
     createTechnology(technologyInput: TechnologyInput): Technology
     createProject(projectInput: ProjectInput): Project
     createUser(userInput: UserInput): User
+    addTechnologiesToProject(projectId: ID!, techToProjectInput: [String!]!): Project
   }
 
   schema {
