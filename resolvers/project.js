@@ -29,20 +29,25 @@ const createProject = async args => {
 };
 
 const addTechnologiesToProject = async args => {
-  console.log(args);
   try {
     const foundProject = await Project.findById(args.projectId);
     if (!foundProject) {
       throw new Error('Project not found!');
     }
-    await args.techToProjectInput.map(label => {
-      console.log(label);
-      const foundTech = Technology.findOne({ label });
-      if (!foundTech) {
-        throw new Error('Technology specified not found!');
-      }
-      console.log(foundProject.technologies);
-      return foundProject.technologies.push(foundTech);
+    await args.techToProjectInput.forEach(label => {
+      return Technology.findOne({ label })
+        .then(result =>
+          Project.updateOne(foundProject, {
+            $push: { technologies: result }
+          })
+            .then(result => result)
+            .catch(err => {
+              throw new Error(err);
+            })
+        )
+        .catch(err => {
+          throw new Error(err);
+        });
     });
     await foundProject.save();
   } catch (err) {
