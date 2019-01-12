@@ -10,7 +10,22 @@ const technologies = async () => {
       };
     });
   } catch (err) {
-    throw err;
+    throw new Error(err);
+  }
+};
+
+const singleTechnology = async args => {
+  try {
+    const technology = await Technology.findById(args.techId);
+    if (!technology) {
+      throw new Error('Specified technology does not exist!');
+    }
+    return {
+      ...technology._doc,
+      _id: technology.id
+    };
+  } catch (err) {
+    throw new Error(err);
   }
 };
 
@@ -20,8 +35,28 @@ const createTechnology = async args => {
     const result = await technology.save();
     return result;
   } catch (err) {
-    throw err;
+    throw new Error(err);
   }
 };
 
-module.exports = { technologies, createTechnology };
+const removeTechnology = async args => {
+  try {
+    const deletedTech = Technology.findByIdAndDelete(args.techId);
+    if (!deletedTech) {
+      throw new Error('Specified technology does not exist!');
+    }
+    return {
+      ...deletedTech._doc,
+      _id: deletedTech.id
+    };
+  } catch (err) {
+    throw new Error(err);
+  }
+};
+
+module.exports = {
+  technologies,
+  singleTechnology,
+  createTechnology,
+  removeTechnology
+};

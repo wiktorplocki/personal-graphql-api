@@ -11,6 +11,18 @@ const projects = async () => {
   }
 };
 
+const singleProject = async args => {
+  try {
+    const project = await Project.findById(args.projectId);
+    if (!project) {
+      throw new Error('Project does not exist!');
+    }
+    return transformProjects(project);
+  } catch (err) {
+    throw new Error(err);
+  }
+};
+
 const createProject = async args => {
   const project = new Project({
     name: args.projectInput.name,
@@ -28,31 +40,100 @@ const createProject = async args => {
   }
 };
 
+const removeProject = async args => {
+  try {
+    const deletedProject = await Project.findByIdAndDelete(args.projectId);
+    if (!deletedProject) {
+      throw new Error('Project does not exist!');
+    }
+    return transformProjects(deletedProject);
+  } catch (err) {
+    throw new Error(err);
+  }
+};
+
 const addTechnologiesToProject = async args => {
   try {
     const foundProject = await Project.findById(args.projectId);
     if (!foundProject) {
       throw new Error('Project not found!');
     }
-    await args.techToProjectInput.forEach(label => {
-      return Technology.findOne({ label })
+    await args.techToProjectInput.forEach(label =>
+      Technology.findOne({ label })
         .then(result =>
           Project.updateOne(foundProject, {
             $push: { technologies: result }
           })
-            .then(result => result)
-            .catch(err => {
-              throw new Error(err);
-            })
         )
         .catch(err => {
           throw new Error(err);
-        });
-    });
+        })
+    );
     await foundProject.save();
+    return transformProjects(foundProject);
   } catch (err) {
     throw new Error(err);
   }
 };
 
-module.exports = { projects, createProject, addTechnologiesToProject };
+// const removeTechnologiesFromProject = async args => {
+//   try {
+//     const foundProject = await Project.findById(args.projectId);
+//     if (!foundProject) {
+//       throw new Error('Project not found!');
+//     }
+//     await args.techToProjectInput.forEach(label =>
+//       Technology.findOne({ label })
+//         .then(result =>
+//           Project.updateOne(foundProject, {
+//             $pull: { technologies: { label: { $in: result.label } } }
+//           })
+//         )
+//         .catch(err => {
+//           throw new Error(err);
+//         })
+//     );
+//     await foundProject.save();
+//     return transformProjects(foundProject);
+//   } catch (err) {
+//     throw new Error(err);
+//   }
+// };
+
+// iterate over list of technologies on a project, search for matches among ids of existing technologies
+
+const removeTechnologiesFromProject = async args => {
+  try {
+    const foundProject = await Project.findById(args.projectId);
+    if (!foundProject) {
+      throw new Error('Project not found!');
+    }
+    if (foundProject.technologies && foundProject.technologies.length > 0) {
+      foundProject.technologies.forEach(tech => {
+        Technology.findById(tech).then(result => {
+          if (args.techToProjectInput.includes(result.label)) {
+            Project.findByIdAndUpdate(foundProject.id, {
+              $pull: { technologies: result._id }
+            }).then(res => res);
+          } else {
+            throw new Error('Technology specified not found in this project!');
+          }
+        });
+      });
+    } else {
+      throw new Error('Project does not have any technologies attached!');
+    }
+    return transformProjects(foundProject);
+  } catch (err) {
+    throw new Error(err);
+  }
+};
+
+module.exports = {
+  projects,
+  singleProject,
+  createProject,
+  removeProject,
+  addTechnologiesToProject,
+  removeTechnologiesFromProject
+};
