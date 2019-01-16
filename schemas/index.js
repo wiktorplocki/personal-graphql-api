@@ -1,6 +1,12 @@
 const { buildSchema } = require('graphql');
 
 module.exports = buildSchema(`
+  type Blog {
+    _id: ID!
+    title: String!
+    body: String!
+    hidden: Boolean!
+  }
   type Technology {
     _id: ID!
     label: String!
@@ -23,6 +29,11 @@ module.exports = buildSchema(`
     tokenExpiry: Int!
   }
 
+  input BlogInput {
+    title: String!
+    body: String!
+    hidden: Boolean
+  }
   input TechnologyInput {
     label: String!
   }
@@ -37,6 +48,8 @@ module.exports = buildSchema(`
   }
 
   type RootQuery {
+    blogs: [Blog!]!
+    singleBlog(blogId: ID!): Blog!
     technologies: [Technology!]!
     singleTechnology(techId: ID!): Technology!
     projects: [Project!]!
@@ -46,13 +59,15 @@ module.exports = buildSchema(`
   }
 
   type RootMutation {
+    createBlog(blogInput: BlogInput): Blog!
+    removeBlog(blogId: ID!): Blog!
     createTechnology(technologyInput: TechnologyInput): Technology!
     removeTechnology(technologyId: ID!): Technology!
     createProject(projectInput: ProjectInput): Project!
     removeProject(projectId: ID!): Project!
     createUser(userInput: UserInput): User
-    addTechnologiesToProject(projectId: ID!, techToProjectInput: [String!]!): Project!
-    removeTechnologiesFromProject(projectId: ID!, techToProjectInput: [String!]!): Project!
+    addTechnologyToProject(projectId: ID!, techToProjectInput: String!): Project!
+    removeTechnologyFromProject(projectId: ID!, techToProjectInput: String!): Project!
   }
 
   schema {
