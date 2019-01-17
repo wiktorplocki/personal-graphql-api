@@ -65,7 +65,8 @@ module.exports = buildSchema(`
     removeTechnology(technologyId: ID!): Technology!
     createProject(projectInput: ProjectInput): Project!
     removeProject(projectId: ID!): Project!
-    createUser(userInput: UserInput): User
+    createUser(userInput: UserInput): User!
+    removeUser(userId: ID!): User!
     addTechnologyToProject(projectId: ID!, techToProjectInput: String!): Project!
     removeTechnologyFromProject(projectId: ID!, techToProjectInput: String!): Project!
   }
