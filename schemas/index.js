@@ -14,8 +14,9 @@ module.exports = buildSchema(`
   type Project {
     _id: ID!
     name: String!
-    client: String!
+    client: String
     description: String!
+    link: String
     technologies: [Technology!]!
   }
   type User {
@@ -39,8 +40,9 @@ module.exports = buildSchema(`
   }
   input ProjectInput {
     name: String!
-    client: String!
+    client: String
     description: String!
+    link: String
   }
   input UserInput {
     email: String!
@@ -71,8 +73,13 @@ module.exports = buildSchema(`
     removeTechnologyFromProject(projectId: ID!, techToProjectInput: String!): Project!
   }
 
+  type RootSubscription {
+    projectsFeed: [Project!]
+  }
+
   schema {
     query: RootQuery
     mutation: RootMutation
+    subscription: RootSubscription
   }
 `);
