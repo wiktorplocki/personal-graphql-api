@@ -33,7 +33,23 @@ const createTechnology = async args => {
   const technology = new Technology({ label: args.technologyInput.label });
   try {
     const result = await technology.save();
-    return result;
+    return { ...result._doc, _id: result.id };
+  } catch (err) {
+    throw new Error(err);
+  }
+};
+
+const updateTechnology = async args => {
+  try {
+    const updatedTechnology = await Technology.findByIdAndUpdate(
+      args.techId,
+      args.technologyInput
+    );
+    if (!updatedTechnology) {
+      throw new Error('No technology found!');
+    }
+    await updatedTechnology.save();
+    return { ...updatedTechnology._doc, _id: updatedTechnology.id };
   } catch (err) {
     throw new Error(err);
   }
@@ -41,7 +57,7 @@ const createTechnology = async args => {
 
 const removeTechnology = async args => {
   try {
-    const deletedTech = Technology.findByIdAndDelete(args.techId);
+    const deletedTech = await Technology.findByIdAndDelete(args.techId);
     if (!deletedTech) {
       throw new Error('Specified technology does not exist!');
     }
@@ -58,5 +74,6 @@ module.exports = {
   technologies,
   singleTechnology,
   createTechnology,
+  updateTechnology,
   removeTechnology
 };

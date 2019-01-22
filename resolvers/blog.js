@@ -41,6 +41,22 @@ const createBlog = async args => {
   }
 };
 
+const updateBlog = async args => {
+  try {
+    const updatedBlog = await Blog.findByIdAndUpdate(
+      args.blogId,
+      args.blogInput
+    );
+    if (!updatedBlog) {
+      throw new Error('Blog not found!');
+    }
+    await updatedBlog.save();
+    return transformBlogs(updatedBlog);
+  } catch (err) {
+    throw new Error(err);
+  }
+};
+
 const removeBlog = async args => {
   const deletedBlog = await Blog.findByIdAndDelete(args.blogId);
   if (!deletedBlog) {
@@ -49,4 +65,4 @@ const removeBlog = async args => {
   return transformBlogs(deletedBlog);
 };
 
-module.exports = { blogs, singleBlog, createBlog, removeBlog };
+module.exports = { blogs, singleBlog, createBlog, updateBlog, removeBlog };

@@ -35,13 +35,27 @@ module.exports = buildSchema(`
     body: String!
     hidden: Boolean
   }
+  input BlogUpdateInput{
+    title: String
+    body: String
+    hidden: Boolean
+  }
   input TechnologyInput {
     label: String!
+  }
+  input TechnologyUpdateInput {
+    label: String
   }
   input ProjectInput {
     name: String!
     client: String
     description: String!
+    link: String
+  }
+  input ProjectUpdateInput {
+    name: String
+    client: String
+    description: String
     link: String
   }
   input UserInput {
@@ -62,15 +76,19 @@ module.exports = buildSchema(`
 
   type RootMutation {
     createBlog(blogInput: BlogInput): Blog!
-    removeBlog(blogId: ID!): Blog!
+    updateBlog(blogId: ID!, blogInput: BlogInput): Blog!
+    removeBlog(blogId: ID!): Blog
     createTechnology(technologyInput: TechnologyInput): Technology!
-    removeTechnology(technologyId: ID!): Technology!
+    updateTechnology(technologyId: ID!, technologyInput: TechnologyInput): Technology!
+    removeTechnology(technologyId: ID!): Technology
     createProject(projectInput: ProjectInput): Project!
-    removeProject(projectId: ID!): Project!
+    updateProject(projectId: ID!, projectUpdateInput: ProjectUpdateInput): Project!
+    removeProject(projectId: ID!): Project
     createUser(userInput: UserInput): User!
     removeUser(userId: ID!): User!
     addTechnologyToProject(projectId: ID!, techToProjectInput: String!): Project!
-    removeTechnologyFromProject(projectId: ID!, techToProjectInput: String!): Project!
+    addTechnologiesToProject(projectId: ID!, techToProjectInput: [String!]): Project!
+    removeTechnologiesFromProject(projectId: ID!, techToProjectInput: [String!]): Project!
   }
 
   type RootSubscription {
