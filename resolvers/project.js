@@ -28,6 +28,7 @@ const createProject = async args => {
     name: args.projectInput.name,
     client: args.projectInput.client,
     description: args.projectInput.description,
+    link: args.projectInput.link,
     technologies: []
   });
   let createdProject;
