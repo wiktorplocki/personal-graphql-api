@@ -4,6 +4,7 @@ const ProjectSchema = new mongoose.Schema({
   name: { type: String, required: true },
   client: { type: String },
   description: { type: String },
+  link: { type: String },
   technologies: [
     {
       type: mongoose.Schema.Types.ObjectId,
