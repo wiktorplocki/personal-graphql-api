@@ -2,14 +2,7 @@ const Project = require('../models/project');
 const Technology = require('../models/technology');
 const { transformProjects } = require('../resolvers/merge');
 
-const projects = async () => {
-  try {
-    const projects = await Project.find();
-    return projects.map(project => transformProjects(project));
-  } catch (err) {
-    throw err;
-  }
-};
+const projects = async () => await Project.find().map(transformProjects);
 
 const singleProject = async args => {
   try {
@@ -31,14 +24,10 @@ const createProject = async args => {
     link: args.projectInput.link,
     technologies: []
   });
-  let createdProject;
-  try {
-    const result = await project.save();
-    createdProject = transformProjects(result);
-    return createdProject;
-  } catch (err) {
-    throw err;
+  if (!project) {
+    throw new Error('Project could not be created!');
   }
+  return transformProjects(await project.save());
 };
 
 const updateProject = async args => {
